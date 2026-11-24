@@ -1,5 +1,5 @@
 """
-Modelos de dados do Bot Backup Catraca.
+Modelos de dados do Backup Utility CiD.
 """
 
 from .device import ControlIdDevice, DeviceBackupStats

@@ -1,9 +1,9 @@
-# TRD: Technical Requirements Document — Bot Backup Catraca (iDFace -> MySQL / iDSecure)
+﻿# TRD: Technical Requirements Document — Backup Utility CiD (iDFace -> MySQL / iDSecure)
 
 **Versão:** 2.0 (Com Suporte Nativo a MySQL e Restauração iDSecure)  
 **Data:** 16 de Outubro de 2026  
 **Status:** Especificação Técnica Aprovada para Desenvolvimento  
-**Referência:** [PRD.md](file:///g:/Meu%20Drive/Projetos/Bot%20Backup%20Catraca/PRD.md)  
+**Referência:** [PRD.md](file:///g:/Meu%20Drive/Projetos/Backup_Utility_CiD/PRD.md)  
 **Padrão Arquitetural:** Ecossistema `SCAN BOT Rede` (Python 3.10+ + Flet + HTTPX + SQLite + PyMySQL + PyInstaller).
 
 ---
@@ -34,7 +34,7 @@ Quando o disco rígido do servidor do cliente queima, **não existe um servidor 
 ## 2. Arquitetura do Sistema e Estrutura de Diretórios
 
 ```text
-Bot Backup Catraca/
+Backup Utility CiD/
 │
 ├── PRD.md                              # Product Requirements Document
 ├── TRD.md                              # Technical Requirements Document (este arquivo)

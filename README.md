@@ -1,4 +1,4 @@
-# 🛡️ Bot Backup Catraca (Control iD iDFace ➔ iDSecure)
+﻿# 🛡️ Backup Utility CiD (Control iD iDFace ➔ iDSecure)
 
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
 [![Flet](https://img.shields.io/badge/UI-Flet%201.0-4527a0.svg)](https://flet.dev/)
@@ -6,7 +6,7 @@
 [![MySQL](https://img.shields.io/badge/Database-MySQL%205.7%20%2F%208.0-orange.svg)](https://www.mysql.com/)
 [![Tests](https://img.shields.io/badge/Tests-Pytest%20Passing-success.svg)](https://docs.pytest.org/)
 
-Aplicação desktop profissional projetada para técnicos de campo e administradores de controle de acesso. O **Bot Backup Catraca** automatiza a varredura na rede local, a extração integral de bancos de contingência de leitores faciais **Control iD (iDFace)**, a consolidação inteligente com deduplicação de biometrias faciais em SQLite e a restauração completa no software servidor **iDSecure** (via injeção direta em MySQL, script SQL Dump ou sincronização via Web API).
+Aplicação desktop profissional projetada para técnicos de campo e administradores de controle de acesso. O **Backup Utility CiD** automatiza a varredura na rede local, a extração integral de bancos de contingência de leitores faciais **Control iD (iDFace)**, a consolidação inteligente com deduplicação de biometrias faciais em SQLite e a restauração completa no software servidor **iDSecure** (via injeção direta em MySQL, script SQL Dump ou sincronização via Web API).
 
 ---
 
@@ -55,7 +55,7 @@ O bot oferece 3 métodos robustos para envio dos dados:
 ## 📁 Estrutura do Projeto
 
 ```text
-Bot Backup Catraca/
+Backup Utility CiD/
 │
 ├── backend/
 │   ├── core/
@@ -108,7 +108,7 @@ Bot Backup Catraca/
 1. **Clone ou extraia o repositório:**
    ```bash
    git clone <url-do-repositorio>
-   cd "Bot Backup Catraca"
+   cd "Backup Utility CiD"
    ```
 
 2. **Crie e ative um ambiente virtual (recomendado):**
@@ -170,7 +170,7 @@ Execute o script de automação no PowerShell:
 
 O script executará a bateria completa de testes e empacotará o sistema via PyInstaller. O executável standalone será gerado em:
 ```text
-dist/BACKUP-BOT-iDFace/BACKUP-BOT-iDFace.exe
+dist/Backup-Utility-CiD/Backup-Utility-CiD.exe
 ```
 
 ---

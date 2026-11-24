@@ -26,7 +26,7 @@ COLOR_TEXT_MUTED = "#64748B"       # Cinza discreto para hints
 
 def apply_theme(page: ft.Page):
     """Configura o tema global e dimensões da janela."""
-    page.title = "BOT BACKUP CATRACA — Control iD iDFace ↔ iDSecure & MySQL"
+    page.title = "BACKUP UTILITY CiD — Control iD iDFace ↔ iDSecure & MySQL"
     page.theme_mode = ft.ThemeMode.DARK
     page.bgcolor = COLOR_BG_PRIMARY
     page.padding = 0

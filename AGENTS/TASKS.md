@@ -1,11 +1,11 @@
-# TASKS: Plano de Execução e Checklist de Desenvolvimento (IDE)
+﻿# TASKS: Plano de Execução e Checklist de Desenvolvimento (IDE)
 
-**Projeto:** Bot Backup Catraca (Control iD iDFace $\rightarrow$ SQLite / MySQL iDSecure)  
+**Projeto:** Backup Utility CiD (Control iD iDFace $\rightarrow$ SQLite / MySQL iDSecure)  
 **Stack:** Python 3.10+ | Flet (Flutter UI) | HTTPX (Async) | SQLite3 | PyMySQL  
 **Documentos Base:**
-* [PRD.md](file:///g:/Meu%20Drive/Projetos/Bot%20Backup%20Catraca/PRD.md) — Requisitos de Produto
-* [TRD.md](file:///g:/Meu%20Drive/Projetos/Bot%20Backup%20Catraca/TRD.md) — Arquitetura Técnica
-* [API_DATABASE_MAPPING.md](file:///g:/Meu%20Drive/Projetos/Bot%20Backup%20Catraca/AGENTS/API_DATABASE_MAPPING.md) — Payloads `.fcgi` e Mapeamento MySQL `iDSecure`
+* [PRD.md](file:///g:/Meu%20Drive/Projetos/Backup_Utility_CiD/PRD.md) — Requisitos de Produto
+* [TRD.md](file:///g:/Meu%20Drive/Projetos/Backup_Utility_CiD/TRD.md) — Arquitetura Técnica
+* [API_DATABASE_MAPPING.md](file:///g:/Meu%20Drive/Projetos/Backup_Utility_CiD/AGENTS/API_DATABASE_MAPPING.md) — Payloads `.fcgi` e Mapeamento MySQL `iDSecure`
 
 ---
 
@@ -58,4 +58,4 @@
 ## Fase 6: Servidor Mock Control iD, Testes Automatizados e Build `.exe`
 - [x] **6.1** Criar `tests/mock_idface_server.py` (simulando 2 catracas iDFace com usuários, cartões, grupos, horários e fotos JPEG binárias).
 - [x] **6.2** Criar testes unitários e E2E (`test_client_extractor.py`, `test_merger_sqlite.py`, `test_mysql_translator.py`, `test_e2e.py`).
-- [x] **6.3** Criar `build.ps1` para rodar os testes e empacotar o executável standalone `dist/BACKUP-BOT-iDFace.exe` via PyInstaller.
+- [x] **6.3** Criar `build.ps1` para rodar os testes e empacotar o executável standalone `dist/Backup-Utility-CiD.exe` via PyInstaller.

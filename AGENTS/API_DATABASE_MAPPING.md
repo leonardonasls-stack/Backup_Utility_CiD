@@ -1,6 +1,6 @@
-# API & Database Mapping Specification — Control iD (iDFace `.fcgi` ↔ iDSecure `MySQL` & `REST API`)
+﻿# API & Database Mapping Specification — Control iD (iDFace `.fcgi` ↔ iDSecure `MySQL` & `REST API`)
 
-**Referência:** Complemento Técnico ao [TRD.md](file:///g:/Meu%20Drive/Projetos/Bot%20Backup%20Catraca/TRD.md)  
+**Referência:** Complemento Técnico ao [TRD.md](file:///g:/Meu%20Drive/Projetos/Backup_Utility_CiD/TRD.md)  
 **Objetivo:** Documentar todos os payloads JSON exatos dos terminais **iDFace** e as queries/estruturas de tradução para o banco **MySQL do iDSecure** e pacote de importação.
 
 ---

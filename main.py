@@ -1,5 +1,5 @@
 """
-Entrypoint principal do Bot Backup Catraca (Control iD iDFace -> iDSecure / MySQL).
+Entrypoint principal do Backup Utility CiD (Control iD iDFace -> iDSecure / MySQL).
 Inicia a aplicação desktop em Flet.
 """
 

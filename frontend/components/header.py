@@ -31,7 +31,7 @@ def create_header() -> ft.Container:
                                     spacing=8,
                                     controls=[
                                         ft.Text(
-                                            "BOT BACKUP CATRACA",
+                                            "BACKUP UTILITY CiD",
                                             size=18,
                                             weight=ft.FontWeight.BOLD,
                                             color=COLOR_TEXT_PRIMARY,

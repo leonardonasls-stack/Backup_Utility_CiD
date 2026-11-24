@@ -1,19 +1,39 @@
 """
-Módulo de Logging centralizado do Bot Backup Catraca.
+Módulo de Logging centralizado do Backup Utility CiD.
 Configura gravação com rotação em logs/bot_backup.log e saída no console.
 """
 
 import logging
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
+import re
+
+
+class SensitiveDataFilter(logging.Filter):
+    """Mascara credenciais, tokens e sessões antes da gravação em log (LGPD/Segurança)."""
+
+    _PATTERNS = [
+        (re.compile(r'(?i)(password|senha|token|session|secret)["\']?\s*[:=]\s*["\']?([^\s"\',;]+)'), r'\1=***'),
+        (re.compile(r'(?i)(Bearer\s+)[A-Za-z0-9\-._~+/]+=*'), r'\1***'),
+    ]
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        msg = record.getMessage()
+        for pattern, repl in self._PATTERNS:
+            msg = pattern.sub(repl, msg)
+        record.msg = msg
+        record.args = ()
+        return True
 
 # Cria diretório de logs na raiz do projeto se não existir
 LOGS_DIR = Path("logs")
 LOGS_DIR.mkdir(parents=True, exist_ok=True)
 MAIN_LOG_FILE = LOGS_DIR / "bot_backup.log"
 
-logger = logging.getLogger("BotBackupCatraca")
+logger = logging.getLogger("BackupUtilityCiD")
 logger.setLevel(logging.DEBUG)
+if not any(isinstance(f, SensitiveDataFilter) for f in logger.filters):
+    logger.addFilter(SensitiveDataFilter())
 
 if not logger.handlers:
     formatter = logging.Formatter(

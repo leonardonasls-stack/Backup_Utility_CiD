@@ -1,5 +1,5 @@
 """
-Módulo core do Bot Backup Catraca.
+Módulo core do Backup Utility CiD.
 """
 
 from .network_utils import is_valid_ipv4, parse_ip_targets

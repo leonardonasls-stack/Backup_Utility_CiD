@@ -111,7 +111,7 @@ class MySQLIDSecureService:
         lines = [
             "-- =============================================================",
             "-- SCRIPT DE RESTAURAÇÃO PARA MYSQL DO IDSECURE",
-            f"-- Gerado pelo Bot Backup Catraca em: {time.strftime('%Y-%m-%d %H:%M:%S')}",
+            f"-- Gerado pelo Backup Utility CiD em: {time.strftime('%Y-%m-%d %H:%M:%S')}",
             "-- Compatível com iDSecure Lite / Pro / Enterprise",
             "-- =============================================================",
             "",

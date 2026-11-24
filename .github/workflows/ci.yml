@@ -29,6 +29,12 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          pip install ruff mypy
+
+      - name: 🧹 Lint e Type Check (Ruff & Mypy)
+        run: |
+          python -m ruff check backend tests
+          python -m mypy backend --ignore-missing-imports
 
       - name: 🔍 Executar Testes com Pytest
         run: |
@@ -59,7 +65,8 @@ jobs:
       - name: ⚙️ Compilar Executável com PyInstaller
         run: |
           python -m PyInstaller --noconfirm --onedir --windowed `
-            --name "BACKUP-BOT-iDFace" `
+            --name "Backup-Utility-CiD" `
+            --add-data "frontend/assets;frontend/assets" `
             --collect-all flet `
             --collect-all pymysql `
             --collect-all cryptography `
@@ -70,6 +77,6 @@ jobs:
       - name: 📤 Publicar Binário como Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: BACKUP-BOT-iDFace-Windows
-          path: dist/BACKUP-BOT-iDFace/
+          name: Backup-Utility-CiD-Windows
+          path: dist/Backup-Utility-CiD/
           retention-days: 14

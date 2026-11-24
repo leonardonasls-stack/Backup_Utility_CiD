@@ -1,5 +1,5 @@
 """
-Serviços de persistência, restauração e exportação do Bot Backup Catraca.
+Serviços de persistência, restauração e exportação do Backup Utility CiD.
 """
 
 from .sqlite_storage import SQLiteStorage

@@ -1,4 +1,4 @@
-# PRD: Bot de Backup e Recuperação de Desastres para Control iD (iDFace)
+﻿# PRD: Bot de Backup e Recuperação de Desastres para Control iD (iDFace)
 
 **Versão:** 1.0  
 **Data:** 16 de Outubro de 2026  

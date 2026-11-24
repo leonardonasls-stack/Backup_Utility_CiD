@@ -34,7 +34,7 @@ class RestoreMySQLPanel(ft.Column):
         # Seletor de pasta de backup
         self.folder_input = ft.TextField(
             label="Caminho da Pasta do Backup",
-            hint_text="Ex: G:\\Meu Drive\\Projetos\\Bot Backup Catraca\\backups\\backup_20261016_150000",
+            hint_text="Ex: G:\\Meu Drive\\Projetos\\Backup_Utility_CiD\\backups\\backup_20261016_150000",
             bgcolor=COLOR_BG_TERTIARY,
             border_color=COLOR_BORDER,
             focused_border_color=COLOR_ACCENT,
