@@ -27,6 +27,7 @@ from frontend.styles.theme import (
     create_card_container,
 )
 from frontend.components.header import create_header
+from frontend.components.footer import create_footer
 from frontend.components.connection_panel import ConnectionPanel
 from frontend.components.device_selector import DeviceSelector
 from frontend.components.progress_panel import ProgressPanel
@@ -262,6 +263,7 @@ def build_app(page: ft.Page):
             controls=[
                 header,
                 ft.Container(content=tabs, expand=True),
+                create_footer(page),
             ],
         )
     )
