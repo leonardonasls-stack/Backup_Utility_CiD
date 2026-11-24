@@ -1,4 +1,4 @@
-﻿# Backup Utility CiD
+# Backup Utility CiD
 
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
 [![Flet](https://img.shields.io/badge/UI-Flet%201.0-4527a0.svg)](https://flet.dev/)
