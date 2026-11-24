@@ -75,23 +75,10 @@ class IDFaceClient:
             raise IDFaceAPIError(err)
 
     async def ensure_session(self) -> str:
-        """Garante que há uma sessão válida, efetuando login se necessário."""
+        """Garante que há uma sessão em memória, efetuando login se necessário."""
         async with self._session_lock:
-            if not self.device.session:
-                return await self.login()
-
-            # Valida sessão existente
-            try:
-                val_url = f"{self.device.base_url}/session_is_valid.fcgi?session={self.device.session}"
-                resp = await self.client.post(val_url, json={}, headers={"Content-Type": "application/json"})
-                if resp.status_code == 200:
-                    data = resp.json()
-                    if data.get("session_is_valid") is True:
-                        return self.device.session
-            except Exception:
-                pass
-
-            # Se expirou ou falhou, refaz login
+            if self.device.session:
+                return self.device.session
             return await self.login()
 
     async def request_api(
@@ -106,8 +93,7 @@ class IDFaceClient:
         """
         Executa requisição à API .fcgi com auto-reautenticação em caso de HTTP 401/403.
         """
-        if params is None:
-            params = {}
+        params = dict(params) if params is not None else {}
 
         for attempt in range(max_retries + 1):
             session = await self.ensure_session()
@@ -262,7 +248,7 @@ class IDFaceClient:
             return [
                 {"user_id": u["id"], "timestamp": u.get("image_timestamp", 0)}
                 for u in users
-                if u.get("image_timestamp", 0) > 0 or "id" in u
+                if u.get("image_timestamp", 0) > 0
             ]
         except Exception:
             return []

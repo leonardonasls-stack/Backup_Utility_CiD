@@ -170,12 +170,10 @@ class BackupExtractor:
         log("Iniciando extração e deduplicação de fotos faciais...")
 
         # Carrega checkpoints prévios do SQLite
-        already_downloaded_ids = self.storage.get_downloaded_face_ids()
+        already_downloaded_faces = self.storage.get_downloaded_face_timestamps()
 
         # Obtém lista de usuários consolidados
-        with self.storage._get_connection() as conn:
-            user_rows = conn.execute("SELECT id, registration, name, image_timestamp FROM users").fetchall()
-            users_map = {row["id"]: row for row in user_rows}
+        users_map = self.storage.get_users_map()
 
         for dev in selected_devices:
             if self._is_cancelled:
@@ -204,8 +202,8 @@ class BackupExtractor:
                     ts = f_item.get("timestamp", 0)
 
                     # Deduplicação Pré-Download: Verifica se já temos essa foto
-                    if u_id in already_downloaded_ids:
-                        existing_ts = self.storage.get_face_timestamp(u_id)
+                    if u_id in already_downloaded_faces:
+                        existing_ts = already_downloaded_faces[u_id]
                         if ts <= existing_ts:
                             self.progress.skipped_faces += 1
                             report.total_faces_deduplicated += 1
@@ -226,8 +224,7 @@ class BackupExtractor:
 
                         img_bytes = await client.download_user_image(u_id)
                         if img_bytes:
-                            with open(file_path, "wb") as f_out:
-                                f_out.write(img_bytes)
+                            await asyncio.to_thread(file_path.write_bytes, img_bytes)
 
                             self.storage.register_user_image(
                                 user_id=u_id,
@@ -237,7 +234,7 @@ class BackupExtractor:
                                 status="DOWNLOADED",
                                 source_device_serial=dev.serial,
                             )
-                            already_downloaded_ids.add(u_id)
+                            already_downloaded_faces[u_id] = ts
                             self.progress.downloaded_faces += 1
                             report.total_faces_downloaded += 1
                         else:

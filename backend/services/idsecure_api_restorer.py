@@ -3,12 +3,13 @@ Serviço de Restauração via API Local do iDSecure (https://localhost:30443)
 e Gerador do Pacote Nativo de Importação (importacao_idsecure.zip com Planilha CSV + Fotos JPG).
 """
 
+import asyncio
 import base64
 import csv
 import io
 from pathlib import Path
 import zipfile
-from typing import Dict, Any, List, Optional, Tuple
+from typing import Callable, Dict, Any, List, Optional, Tuple
 import httpx
 
 from backend.models.backup_models import iDSecureAPIConfig
@@ -34,7 +35,6 @@ class IDSecureAPIRestorer:
         with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zipf:
             # 1. Gera CSV em memória com UTF-8 BOM
             csv_output = io.StringIO()
-            csv_output.write("\ufeff")  # BOM para Excel e iDSecure abrirem perfeitamente com acentos
 
             writer = csv.writer(csv_output, delimiter=";", quoting=csv.QUOTE_MINIMAL)
             # Cabeçalho padrão aceito pelo importador do iDSecure
@@ -109,8 +109,8 @@ class IDSecureAPIRestorer:
     async def sync_faces_to_idsecure_api(
         self,
         config: iDSecureAPIConfig,
-        on_progress: Optional[callable] = None,
-        on_log: Optional[callable] = None,
+        on_progress: Optional[Callable] = None,
+        on_log: Optional[Callable] = None,
     ) -> Tuple[int, int]:
         """
         Envia as fotos faciais para os usuários já cadastrados no iDSecure via API local.
@@ -171,13 +171,20 @@ class IDSecureAPIRestorer:
             total = len(images)
             log(f"Sincronizando {total} fotos com os usuários ativos no iDSecure...")
 
-            for idx, img in enumerate(images, 1):
+            semaphore = asyncio.Semaphore(5)
+            completed = 0
+
+            async def _upload_face(img):
+                nonlocal successes, failures, completed
                 u_id = img["user_id"]
                 reg = str(img["registration"] or "").strip().lower()
                 path = Path(img["file_path"])
                 if not path.exists():
                     failures += 1
-                    continue
+                    completed += 1
+                    if on_progress:
+                        on_progress(completed, total)
+                    return
 
                 # Determina o ID ativo real do usuário no iDSecure:
                 # 1º por matrícula: se houver matrícula igual
@@ -191,39 +198,45 @@ class IDSecureAPIRestorer:
                 else:
                     target_id = u_id
 
-                try:
-                    # 1. Busca dados cadastrais atuais do usuário ativo
-                    r_get = await client.get(f"{url_user}{target_id}", headers=headers)
-                    if r_get.status_code == 200:
-                        u_data = r_get.json()
-                    else:
-                        u_data = {"id": target_id}
+                async with semaphore:
+                    try:
+                        # 1. Busca dados cadastrais atuais do usuário ativo
+                        r_get = await client.get(f"{url_user}{target_id}", headers=headers)
+                        if r_get.status_code == 200:
+                            u_data = r_get.json()
+                        else:
+                            u_data = {"id": target_id}
 
-                    with open(path, "rb") as f_img:
-                        b64 = base64.b64encode(f_img.read()).decode("utf-8")
+                        img_raw = await asyncio.to_thread(Path(path).read_bytes)
+                        b64 = base64.b64encode(img_raw).decode("utf-8")
 
-                    u_data["foto"] = b64
-                    u_data["canUseFacial"] = True
-                    # No backend C# do iDSecure, para atualizar o registro sem disparar colisão de idDevice,
-                    # o campo idDevice é enviado como None/null, preservando a foto e gerando o template facial.
-                    u_data["idDevice"] = None
+                        u_data["foto"] = b64
+                        u_data["canUseFacial"] = True
+                        # No backend C# do iDSecure, para atualizar o registro sem disparar colisão de idDevice,
+                        # o campo idDevice é enviado como None/null, preservando a foto e gerando o template facial.
+                        u_data["idDevice"] = None
 
-                    resp = await client.put(url_user, json=u_data, headers=headers)
-                    if resp.status_code == 200 and resp.json().get("code") == 200:
-                        successes += 1
-                        # Atualiza mapa se gerou um newID na edição com substituição
-                        new_id = resp.json().get("newID")
-                        if new_id and new_id != target_id:
-                            if reg:
-                                active_users_map[f"reg_{reg}"] = new_id
-                            active_users_map[f"dev_{u_id}"] = new_id
-                    else:
+                        resp = await client.put(url_user, json=u_data, headers=headers)
+                        if resp.status_code == 200 and resp.json().get("code") == 200:
+                            successes += 1
+                            # Atualiza mapa se gerou um newID na edição com substituição
+                            new_id = resp.json().get("newID")
+                            if new_id and new_id != target_id:
+                                if reg:
+                                    active_users_map[f"reg_{reg}"] = new_id
+                                active_users_map[f"dev_{u_id}"] = new_id
+                        else:
+                            failures += 1
+                            log(f"Falha ao enviar foto do usuário {u_id}: HTTP {resp.status_code}")
+                    except Exception as exc:
                         failures += 1
-                except Exception:
-                    failures += 1
+                        log(f"Erro ao sincronizar foto do usuário {u_id}: {exc}")
+                    finally:
+                        completed += 1
+                        if on_progress:
+                            on_progress(completed, total)
 
-                if on_progress:
-                    on_progress(idx, total)
+            await asyncio.gather(*(_upload_face(img) for img in images))
 
         log(f"Sincronização de fotos concluída: {successes} enviadas com sucesso, {failures} falhas.")
         return successes, failures

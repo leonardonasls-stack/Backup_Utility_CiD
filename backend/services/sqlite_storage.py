@@ -25,6 +25,8 @@ class SQLiteStorage:
         conn = sqlite3.connect(self.db_path)
         conn.row_factory = sqlite3.Row
         conn.execute("PRAGMA foreign_keys = ON;")
+        conn.execute("PRAGMA journal_mode = WAL;")
+        conn.execute("PRAGMA synchronous = NORMAL;")
         try:
             yield conn
         finally:
@@ -205,6 +207,15 @@ class SQLiteStorage:
                 );
             """)
 
+            conn.execute("""
+                CREATE INDEX IF NOT EXISTS idx_raw_device_objects_serial_obj
+                ON raw_device_objects(device_serial, object_name);
+            """)
+            conn.execute("""
+                CREATE INDEX IF NOT EXISTS idx_user_images_status
+                ON user_images(status);
+            """)
+
             conn.commit()
 
     def register_device(
@@ -274,6 +285,14 @@ class SQLiteStorage:
             )
             return {row["user_id"] for row in cursor.fetchall()}
 
+    def get_downloaded_face_timestamps(self) -> Dict[int, int]:
+        """Retorna um mapa {user_id: timestamp} das fotos já baixadas com sucesso."""
+        with self._get_connection() as conn:
+            cursor = conn.execute(
+                "SELECT user_id, timestamp FROM user_images WHERE status = 'DOWNLOADED'"
+            )
+            return {row["user_id"]: (row["timestamp"] or 0) for row in cursor.fetchall()}
+
     def get_face_timestamp(self, user_id: int) -> int:
         """Obtém o timestamp da foto registrada para um user_id."""
         with self._get_connection() as conn:
@@ -342,3 +361,11 @@ class SQLiteStorage:
                 "faces_downloaded": faces_downloaded,
                 "faces_failed": faces_failed,
             }
+
+    def get_users_map(self) -> Dict[int, Dict[str, Any]]:
+        """Retorna mapa {user_id: {id, registration, name, image_timestamp}}."""
+        with self._get_connection() as conn:
+            rows = conn.execute(
+                "SELECT id, registration, name, image_timestamp FROM users"
+            ).fetchall()
+            return {row["id"]: dict(row) for row in rows}

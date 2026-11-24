@@ -99,6 +99,7 @@ def get_default_local_subnet() -> str:
         octets = local_ip.split(".")
         if len(octets) == 4:
             return f"{octets[0]}.{octets[1]}.{octets[2]}.0/24"
-    except Exception:
-        pass
+    except Exception as exc:
+        from backend.core.logger import logger
+        logger.debug(f"Falha ao detectar sub-rede local automaticamente: {exc}")
     return "192.168.1.0/24"

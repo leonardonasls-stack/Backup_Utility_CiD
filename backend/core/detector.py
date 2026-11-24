@@ -7,6 +7,7 @@ import asyncio
 from typing import Optional, Dict, Any
 import httpx
 
+from backend.core.logger import logger
 from backend.models.device import ControlIdDevice
 
 
@@ -58,8 +59,8 @@ async def probe_controlid_device(
                     data = resp.json()
                     if isinstance(data, dict) and ("session_is_valid" in data or "error" in data or resp.status_code == 200):
                         return device
-                except Exception:
-                    pass
+                except Exception as exc:
+                    logger.debug(f"Resposta não-JSON de {ip}:{port} em session_is_valid.fcgi: {exc}")
 
             # Fallback: Tenta system_information.fcgi sem sessão (algumas versões retornam erro de auth estruturado)
             resp_info = await client.post(
@@ -70,7 +71,8 @@ async def probe_controlid_device(
             if resp_info.status_code in (200, 400, 401, 403):
                 return device
 
-        except Exception:
+        except Exception as exc:
+            logger.debug(f"Falha no probe HTTP de {ip}:{port}: {exc}")
             return None
 
     return None
